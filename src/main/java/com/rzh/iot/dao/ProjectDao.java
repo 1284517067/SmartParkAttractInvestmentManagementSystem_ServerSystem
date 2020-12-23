@@ -79,4 +79,40 @@ public interface ProjectDao {
             " order by a.project_id desc")
     int getSizeOfProjectListByKey(String key);
 
+    @Select("select a.project_id, a.enterprise_name, a.enterprise_area, a.industry_type_id, a.registered_capital, a.contact," +
+            " a.contact_tel, a.source, a.principal , b.industry_type_name from project a inner join industry_type b where" +
+            " a.industry_type_id = b.industry_type_id and a.status = '已删除' order by a.project_id desc limit #{currentPage}, #{limit}")
+    List<Project> getDeletedProjectListByLimit(Integer currentPage,Integer limit);
+
+    @Select("select count(*) from project where status = '已删除'")
+    int getSizeOfDeletedProjectList();
+
+    @Update("update project set status = '正常' where project_id = #{projectId}")
+    int recoverProjectByProjectId(Long projectId);
+
+    @Select("select a.project_id, a.enterprise_name, a.enterprise_area, a.industry_type_id, a.registered_capital, a.contact," +
+            " a.contact_tel, a.source, a.principal , b.industry_type_name from project a inner join industry_type b , department c where" +
+            " a.industry_type_id = b.industry_type_id and a.department_id = c.department_id and a.status = '已删除' and " +
+            "((a.project_id like '%${value}%') or (a.enterprise_name like '%${value}%') or (a.enterprise_area like '%${value}%')" +
+            " or (a.industry_type_id like '%${value}%') or (a.contact like '%${value}%') or (a.contact_tel like '%${value}%')" +
+            " or (a.contact_department like '%${value}%') or (a.contact_position like '%${value}%') or (a.qq like '%${value}%')" +
+            " or (a.contact_email like '%${value}%') or (a.enterprise_tel like '%${value}%') or (a.enterprise_url like '%${value}%')" +
+            " or (a.enterprise_legal_person like '%${value}%') or (a.registration_time like '%${value}%') or (a.registered_capital like '%${value}%')" +
+            " or (a.department_id like '%${value}%') or (a.principal like '%${value}%') or (b.industry_type_name like '%${value}%')" +
+            " or (c.department_name like '%${value}%'))" +
+            " order by a.project_id desc")
+    List<Project> getDeletedProjectListByKey(String key);
+
+    @Select("select count(project_id) from project a inner join industry_type b , department c where" +
+            " a.industry_type_id = b.industry_type_id and a.department_id = c.department_id and a.status = '已删除' and " +
+            "((a.project_id like '%${value}%') or (a.enterprise_name like '%${value}%') or (a.enterprise_area like '%${value}%')" +
+            " or (a.industry_type_id like '%${value}%') or (a.contact like '%${value}%') or (a.contact_tel like '%${value}%')" +
+            " or (a.contact_department like '%${value}%') or (a.contact_position like '%${value}%') or (a.qq like '%${value}%')" +
+            " or (a.contact_email like '%${value}%') or (a.enterprise_tel like '%${value}%') or (a.enterprise_url like '%${value}%')" +
+            " or (a.enterprise_legal_person like '%${value}%') or (a.registration_time like '%${value}%') or (a.registered_capital like '%${value}%')" +
+            " or (a.department_id like '%${value}%') or (a.principal like '%${value}%') or (b.industry_type_name like '%${value}%')" +
+            " or (c.department_name like '%${value}%'))" +
+            " order by a.project_id desc")
+    int getSizeOfDeletedProjectListByKey(String key);
+
 }

@@ -83,4 +83,28 @@ public class ProjectController {
         JSONObject object = projectService.getProjectListByKey(searchKey);
         return object.toJSONString();
     }
+
+    @RequestMapping(value = "/getDeletedProjectListData")
+    @JwtToken
+    @ResponseBody
+    public String getDeletedProjectListData(@RequestParam String currentPage, @RequestParam String limit){
+        JSONObject object = projectService.getDeletedProjectListData(Integer.parseInt(currentPage),Integer.parseInt(limit));
+        return object.toJSONString();
+    }
+
+    @RequestMapping(value = "/recoverProject")
+    @JwtToken
+    @ResponseBody
+    public String recoverProject(@RequestParam String projectId){
+        JSONObject object = projectService.recoverProject(Long.parseLong(projectId));
+        return object.toJSONString();
+    }
+
+    @RequestMapping(value = "/searchDeletedProjectByKey")
+    @JwtToken
+    @ResponseBody
+    public String searchDeletedProjectByKey(@RequestParam String searchKey){
+        JSONObject object = projectService.getDeletedProjectListByKey(searchKey);
+        return object.toJSONString();
+    }
 }

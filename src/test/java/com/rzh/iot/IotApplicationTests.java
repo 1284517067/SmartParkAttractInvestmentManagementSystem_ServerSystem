@@ -104,7 +104,9 @@ class IotApplicationTests {
 
     @Test
     void testProject(){
-        System.out.println(projectDao.getProjectByProjectId(new Long(1)));
+        int num = 50;
+        num = num++ * 2;
+        System.out.println(num);
     }
 
 }

@@ -19,4 +19,10 @@ public interface ProjectService {
     HashMap<String,Object> handleProject(Long projectId,String username);
 
     JSONObject getProjectListByKey(String key);
+
+    JSONObject getDeletedProjectListData(Integer currentPage,Integer limit);
+
+    JSONObject recoverProject(Long projectId);
+
+    JSONObject getDeletedProjectListByKey(String key);
 }

@@ -116,4 +116,44 @@ public class ProjectServiceImpl implements ProjectService {
         object.put("tableData",projectDao.getProjectListByKey(key));
         return object;
     }
+
+    @Override
+    public JSONObject getDeletedProjectListData(Integer currentPage, Integer limit) {
+        JSONObject object = new JSONObject();
+        int size = projectDao.getSizeOfDeletedProjectList();
+        object.put("responseCode",200);
+        object.put("total",size);
+        if (size == 0){
+            return object;
+        }
+        object.put("tableData",projectDao.getDeletedProjectListByLimit((currentPage - 1)*limit , limit));
+        return object;
+    }
+
+    @Override
+    public JSONObject recoverProject(Long projectId) {
+        JSONObject object = new JSONObject();
+        if (projectDao.isProjectExist(projectId) == 0){
+            object.put("responseCode",400);
+            object.put("msg","该项目不存在");
+            return object;
+        }
+        projectDao.recoverProjectByProjectId(projectId);
+        object.put("responseCode",200);
+        object.put("msg","恢复项目成功");
+        return object;
+    }
+
+    @Override
+    public JSONObject getDeletedProjectListByKey(String key) {
+        JSONObject object = new JSONObject();
+        int size = projectDao.getSizeOfDeletedProjectListByKey(key);
+        object.put("responseCode",200);
+        object.put("total",size);
+        if (size == 0){
+            return object;
+        }
+        object.put("tableData",projectDao.getDeletedProjectListByKey(key));
+        return object;
+    }
 }
