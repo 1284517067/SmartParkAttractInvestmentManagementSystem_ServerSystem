@@ -156,4 +156,30 @@ public class ProjectServiceImpl implements ProjectService {
         object.put("tableData",projectDao.getDeletedProjectListByKey(key));
         return object;
     }
+
+    @Override
+    public JSONObject getPersonProjectList(String username, Integer limit, Integer currentPage) {
+        JSONObject object = new JSONObject();
+        int size = projectDao.getSizeOfPersonProjectList(username);
+        object.put("responseCode",200);
+        object.put("total",size);
+        if(size == 0){
+            return object;
+        }
+        object.put("tableData",projectDao.getPersonProjectListByLimit(username,(currentPage - 1)* limit,limit));
+        return object;
+    }
+
+    @Override
+    public JSONObject getPersonProjectTableByKey(String username, String key) {
+        JSONObject object = new JSONObject();
+        int size = projectDao.getSizeOfPersonProjectListByKey(username,key);
+        object.put("responseCode",200);
+        object.put("total",size);
+        if (size == 0){
+            return object;
+        }
+        object.put("tableData",projectDao.getPersonProjectListByKey(username,key));
+        return object;
+    }
 }

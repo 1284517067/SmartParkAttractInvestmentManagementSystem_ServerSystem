@@ -107,4 +107,20 @@ public class ProjectController {
         JSONObject object = projectService.getDeletedProjectListByKey(searchKey);
         return object.toJSONString();
     }
+
+    @RequestMapping(value = "/getPersonProjectTableData")
+    @JwtToken
+    @ResponseBody
+    public String getPersonProjectTableData(@RequestParam String username , @RequestParam String limit ,@RequestParam String currentPage){
+        JSONObject object = projectService.getPersonProjectList(username,Integer.parseInt(limit),Integer.parseInt(currentPage));
+        return object.toJSONString();
+    }
+
+    @RequestMapping(value = "/getPersonProjectTableByKey")
+    @JwtToken
+    @ResponseBody
+    public String getPersonProjectTableByKey(@RequestParam String username,@RequestParam String searchKey){
+        JSONObject object = projectService.getPersonProjectTableByKey(username,searchKey);
+        return object.toJSONString();
+    }
 }

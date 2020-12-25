@@ -25,4 +25,8 @@ public interface ProjectService {
     JSONObject recoverProject(Long projectId);
 
     JSONObject getDeletedProjectListByKey(String key);
+
+    JSONObject getPersonProjectList(String username,Integer limit , Integer currentPage);
+
+    JSONObject getPersonProjectTableByKey(String username,String key);
 }

@@ -115,4 +115,36 @@ public interface ProjectDao {
             " order by a.project_id desc")
     int getSizeOfDeletedProjectListByKey(String key);
 
+    @Select("select a.project_id, a.enterprise_name, a.enterprise_area, a.industry_type_id, a.registered_capital, a.contact," +
+            " a.contact_tel, a.source, a.status , b.industry_type_name from project a inner join industry_type b where" +
+            " a.industry_type_id = b.industry_type_id and a.principal = #{username} order by a.project_id desc limit #{currentPage}, #{limit}")
+    List<Project> getPersonProjectListByLimit(String username, Integer currentPage, Integer limit);
+
+    @Select("select count(*) from project where principal = #{username}")
+    int getSizeOfPersonProjectList(String username);
+
+    @Select("select a.project_id, a.enterprise_name, a.enterprise_area, a.industry_type_id, a.registered_capital, a.contact," +
+            " a.contact_tel, a.source, a.status , b.industry_type_name from project a inner join industry_type b , department c where" +
+            " a.industry_type_id = b.industry_type_id and a.department_id = c.department_id and a.principal = #{username} and " +
+            "((a.project_id like '%${value}%') or (a.enterprise_name like '%${value}%') or (a.enterprise_area like '%${value}%')" +
+            " or (a.industry_type_id like '%${value}%') or (a.contact like '%${value}%') or (a.contact_tel like '%${value}%')" +
+            " or (a.contact_department like '%${value}%') or (a.contact_position like '%${value}%') or (a.qq like '%${value}%')" +
+            " or (a.contact_email like '%${value}%') or (a.enterprise_tel like '%${value}%') or (a.enterprise_url like '%${value}%')" +
+            " or (a.enterprise_legal_person like '%${value}%') or (a.registration_time like '%${value}%') or (a.registered_capital like '%${value}%')" +
+            " or (a.department_id like '%${value}%') or (a.principal like '%${value}%') or (b.industry_type_name like '%${value}%')" +
+            " or (c.department_name like '%${value}%') or (a.status like '%${value}%'))" +
+            " order by a.project_id desc")
+    List<Project> getPersonProjectListByKey(String username, String value);
+
+    @Select("select count(project_id) from project a inner join industry_type b , department c where" +
+            " a.industry_type_id = b.industry_type_id and a.department_id = c.department_id and a.principal = #{username} and " +
+            "((a.project_id like '%${value}%') or (a.enterprise_name like '%${value}%') or (a.enterprise_area like '%${value}%')" +
+            " or (a.industry_type_id like '%${value}%') or (a.contact like '%${value}%') or (a.contact_tel like '%${value}%')" +
+            " or (a.contact_department like '%${value}%') or (a.contact_position like '%${value}%') or (a.qq like '%${value}%')" +
+            " or (a.contact_email like '%${value}%') or (a.enterprise_tel like '%${value}%') or (a.enterprise_url like '%${value}%')" +
+            " or (a.enterprise_legal_person like '%${value}%') or (a.registration_time like '%${value}%') or (a.registered_capital like '%${value}%')" +
+            " or (a.department_id like '%${value}%') or (a.principal like '%${value}%') or (b.industry_type_name like '%${value}%')" +
+            " or (c.department_name like '%${value}%') or (a.status like '%${value}%'))" +
+            " order by a.project_id desc")
+    int getSizeOfPersonProjectListByKey(String username, String value);
 }
