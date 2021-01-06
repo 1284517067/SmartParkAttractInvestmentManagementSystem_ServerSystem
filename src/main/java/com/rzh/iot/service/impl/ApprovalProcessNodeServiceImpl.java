@@ -2,10 +2,12 @@ package com.rzh.iot.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.rzh.iot.dao.ApprovalProcessDao;
 import com.rzh.iot.dao.ApprovalProcessNodeDao;
 import com.rzh.iot.model.ApprovalProcess;
 import com.rzh.iot.model.ApprovalProcessNode;
 import com.rzh.iot.service.ApprovalProcessNodeService;
+import com.rzh.iot.service.ApprovalProcessService;
 import com.rzh.iot.service.DepartmentService;
 import com.rzh.iot.service.PositionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,9 @@ import java.util.List;
 
 @Service
 public class ApprovalProcessNodeServiceImpl implements ApprovalProcessNodeService {
+
+    @Autowired
+    ApprovalProcessDao approvalProcessDao;
 
     @Autowired
     ApprovalProcessNodeDao approvalProcessNodeDao;
@@ -148,6 +153,18 @@ public class ApprovalProcessNodeServiceImpl implements ApprovalProcessNodeServic
     @Override
     public int getCountOfApprovalProcessNodeByKey(String key) {
         return approvalProcessNodeDao.getCountOfApprovalProcessByKey(key);
+    }
+
+    @Override
+    public JSONObject getApprovalProcessNodesByContractType(String contractType) {
+        JSONObject object = new JSONObject();
+        Long approvalProcessId = approvalProcessDao.getActiveApprovalProcessIdByContractType(contractType);
+        if (approvalProcessId == null){
+            return null;
+        }
+        object.put("responseCode",200);
+        object.put("approvalProcess",getApprovalProcessNodeData(approvalProcessId));
+        return object;
     }
 
     public List<ApprovalProcessNode> mountApprovalProcessNode(String approvalProcessId,String nodes){

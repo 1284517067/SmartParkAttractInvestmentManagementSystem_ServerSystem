@@ -67,4 +67,7 @@ public interface UserDao {
             " or (c.department_name like '%${value}%')" +
             " or (c.department_id like '%${value}%'))")
     int getCountOfUserByKey(String key);
+
+    @Select("select username from user where position_id = #{positionId} and status = '启用'")
+    List<String> getUsernameByPositionId(Long positionId);
 };

@@ -1,5 +1,6 @@
 package com.rzh.iot.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.rzh.iot.model.User;
 
 import java.util.HashMap;
@@ -26,4 +27,6 @@ public interface UserService {
     List<User> getUserListByKey(String key);
 
     int getCountOfUserByKey(String key);
+
+    JSONObject getUserListByPosition(Long departmentId);
 }

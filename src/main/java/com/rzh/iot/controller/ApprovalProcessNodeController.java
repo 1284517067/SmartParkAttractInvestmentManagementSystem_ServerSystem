@@ -92,4 +92,11 @@ public class ApprovalProcessNodeController {
         return object.toJSONString();
     }
 
+    @RequestMapping(value = "/getApprovalProcessNodesByContractType")
+    @JwtToken
+    @ResponseBody
+    public String getApprovalProcessNodesByContractType(@RequestParam String contractType){
+        return approvalProcessNodeService.getApprovalProcessNodesByContractType(contractType).toJSONString();
+    }
+
 }

@@ -55,4 +55,7 @@ public interface ApprovalProcessDao {
     @Select("select count(*) form approval_process where approval_process_id = #{approvalProcessId} and status != '已删除'")
     int isApprovalProcessExist(Long approvalProcessId);
 
+    @Select("select approval_process_id from approval_process where contract_type = #{contractType} and status = '启用'")
+    Long getActiveApprovalProcessIdByContractType(String contractType);
+
 }

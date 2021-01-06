@@ -1,6 +1,7 @@
 package com.rzh.iot.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.rzh.iot.dao.PositionDao;
 import com.rzh.iot.dao.UserDao;
 import com.rzh.iot.model.User;
 import com.rzh.iot.service.DepartmentService;
@@ -18,6 +19,8 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     UserDao userDao;
+    @Autowired
+    PositionDao positionDao;
     @Autowired
     PositionService positionService;
     @Autowired
@@ -157,5 +160,19 @@ public class UserServiceImpl implements UserService {
     @Override
     public int getCountOfUserByKey(String key) {
         return userDao.getCountOfUserByKey(key);
+    }
+
+    @Override
+    public JSONObject getUserListByPosition(Long departmentId) {
+        JSONObject object = new JSONObject();
+        Long positionId = positionDao.getPositionIdByDepartmentIdAndPositionName(departmentId,"经理");
+        if (positionId == null){
+            object.put("responseCode",400);
+            object.put("msg","该部门没有此职位");
+            return object;
+        }
+        object.put("responseCode",200);
+        object.put("managers",userDao.getUsernameByPositionId(positionId));
+        return object;
     }
 }

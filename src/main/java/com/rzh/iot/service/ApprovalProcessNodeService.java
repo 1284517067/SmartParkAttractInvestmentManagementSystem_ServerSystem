@@ -1,5 +1,6 @@
 package com.rzh.iot.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.rzh.iot.model.ApprovalProcess;
 import com.rzh.iot.model.ApprovalProcessNode;
 
@@ -20,4 +21,6 @@ public interface ApprovalProcessNodeService {
     HashMap<String,Object> getApprovalProcessNodeListByKey(String key);
 
     int getCountOfApprovalProcessNodeByKey(String key);
+
+    JSONObject getApprovalProcessNodesByContractType(String contractType);
 }

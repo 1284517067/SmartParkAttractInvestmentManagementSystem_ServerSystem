@@ -4,8 +4,10 @@ import com.rzh.iot.dao.*;
 import com.rzh.iot.model.MenuNode;
 import com.rzh.iot.model.Space;
 import com.rzh.iot.model.User;
+import com.rzh.iot.service.ApprovalOpinionService;
 import com.rzh.iot.service.ApprovalProcessNodeService;
 import com.rzh.iot.service.MenuService;
+import com.rzh.iot.service.impl.ApprovalOpinionServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -36,6 +38,9 @@ class IotApplicationTests {
     EnterpriseDao enterpriseDao;
     @Resource
     ProjectDao projectDao;
+    @Resource
+    ApprovalOpinionService approvalOpinionService;
+
 
     @Test
     void contextLoads() {
@@ -104,9 +109,10 @@ class IotApplicationTests {
 
     @Test
     void testProject(){
-        int num = 50;
-        num = num++ * 2;
-        System.out.println(num);
+
+        Long l = new Long(2);
+        approvalOpinionService.initEnterprise(l);
     }
+
 
 }

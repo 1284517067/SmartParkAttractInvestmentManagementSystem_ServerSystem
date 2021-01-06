@@ -101,4 +101,11 @@ public class UserManagementController {
         object.put("total",userService.getCountOfUserByKey(searchKey));
         return object.toJSONString();
     }
+
+    @RequestMapping(value = "/getUserListByPosition")
+    @JwtToken
+    @ResponseBody
+    public String getUserListByPosition(@RequestParam String departmentId){
+        return userService.getUserListByPosition(Long.parseLong(departmentId)).toJSONString() ;
+    }
 }

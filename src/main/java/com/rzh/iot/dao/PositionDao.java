@@ -42,4 +42,7 @@ public interface PositionDao {
 
     @Select("select count(*) from position a inner join department b where a.department_id = b.department_id and ((a.position_id like '%${value}%') or (a.position_name like '%${value}%') or (a.department_id like '%${value}%') or (b.department_name like '%${value}%'))")
     int getPositionCountByKey(String key);
+
+    @Select("select position_id from position where department_id = #{departmentId} and position_name = #{positionName}")
+    Long getPositionIdByDepartmentIdAndPositionName(Long departmentId,String positionName);
 }
