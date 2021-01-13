@@ -36,12 +36,12 @@ public interface EnterpriseDao {
             " (enterprise_name,status,enterprise_nature,enter_time,office_address,enterprise_legal_person," +
             "registration_time,contact,contact_tel,contact_department,contact_position,enterprise_email," +
             "registered_capital,industry_type_id,enterprise_area,business_registration_type,enterprise_introduction," +
-            "enter_park,record_date,contract_type,enterprise_tel) " +
+            "enter_park,record_date,contract_type,enterprise_tel,source, qq) " +
             "values" +
             " (#{enterpriseName},#{status},#{enterpriseNature},#{enterTime},#{officeAddress},#{enterpriseLegalPerson}," +
             "#{registrationTime},#{contact},#{contactTel},#{contactDepartment},#{contactPosition},#{enterpriseEmail}," +
             "#{registeredCapital},#{industryTypeId},#{enterpriseArea},#{businessRegistrationType},#{enterpriseIntroduction}," +
-            "#{enterPark},#{recordDate},#{contractType},#{enterpriseTel})")
+            "#{enterPark},#{recordDate},#{contractType},#{enterpriseTel},#{source},#{qq})")
     int createEnterprise(Enterprise enterprise);
 
     @Update("update enterprise set " +
@@ -51,7 +51,8 @@ public interface EnterpriseDao {
             "contact_department = #{contactDepartment} , contact_position = #{contactPosition} , enterprise_email = #{enterpriseEmail} , " +
             "registered_capital = #{registeredCapital} , industry_type_id = #{industryTypeId} , enterprise_area = #{enterpriseArea} ," +
             "business_registration_type = #{businessRegistrationType} , enterprise_introduction = #{enterpriseIntroduction} , " +
-            "enter_park = #{enterPark} , record_date = #{recordDate} , contract_type = #{contractType} , enterprise_tel = #{enterpriseTel}" +
+            "enter_park = #{enterPark} , record_date = #{recordDate} , contract_type = #{contractType} , enterprise_tel = #{enterpriseTel}, " +
+            "source = #{source} , qq = #{qq}" +
             " where enterprise_id = #{enterpriseId}")
     int updateEnterprise(Enterprise enterprise);
 
@@ -64,7 +65,7 @@ public interface EnterpriseDao {
             " or (a.enterprise_email like '%${value}%') or (a.registered_capital like '%${value}%') or (a.industry_type_id like '%${value}%')" +
             " or (a.enterprise_area like '%${value}%') or (a.business_registration_type like '%${value}%') or (a.enterprise_introduction like '%${value}%')" +
             " or (a.enter_park like '%${value}%') or (a.record_date like '%${value}%') or (a.contract_type like '%${value}%')" +
-            " or (a.enterprise_tel like '%${value}%') or (b.industry_type_name like '%${value}%') or (c.space_name like '%${value}%')) order by enterprise_id desc")
+            " or (a.enterprise_tel like '%${value}%') or (b.industry_type_name like '%${value}%') or (c.space_name like '%${value}%') or (source like '%${value}%') or (qq like '%${value}%')) order by enterprise_id desc")
     List<Enterprise> getEnterpriseListByKey(String key);
 
     @Select("select distinct count(*) from enterprise a inner join industry_type b , space_data c where" +
@@ -76,6 +77,22 @@ public interface EnterpriseDao {
             " or (a.enterprise_email like '%${value}%') or (a.registered_capital like '%${value}%') or (a.industry_type_id like '%${value}%')" +
             " or (a.enterprise_area like '%${value}%') or (a.business_registration_type like '%${value}%') or (a.enterprise_introduction like '%${value}%')" +
             " or (a.enter_park like '%${value}%') or (a.record_date like '%${value}%') or (a.contract_type like '%${value}%')" +
-            " or (a.enterprise_tel like '%${value}%') or (b.industry_type_name like '%${value}%') or (c.space_name like '%${value}%'))")
+            " or (a.enterprise_tel like '%${value}%') or (b.industry_type_name like '%${value}%') or (c.space_name like '%${value}%') or (source like '%${value}%') or (qq like '%${value}%'))")
     int getSizeOfEnterpriseListByKey(String key);
+
+    @Select("select enterprise_id, enterprise_name from enterprise where status != '退园' order by enterprise_id desc")
+    List<Enterprise> getEnterpriseComponentTableData(Integer currentPage, Integer limit);
+
+    @Select("select count(*) from enterprise where status != '退园'")
+    int getSizeOfEnterpriseComponentTableData();
+
+    @Select("select enterprise_id, enterprise_name from enterprise where status != '退园' and ((enterprise_id like '%${value}%') or (enterprise_name like '%${value}%')) order by enterprise_id desc")
+    List<Enterprise> getEnterpriseComponentTableDataByKey(String key);
+
+    @Select("select count(*) from enterprise where status != '退园' and ((enterprise_id like '%${value}%') or (enterprise_name like '%${value}%')) order by enterprise_id desc")
+    int getSizeOfEnterpriseComponentTableDataByKey(String key);
+
+    @Select("select contract_type, source, enterprise_area, industry_type_id, contact, contact_department, contact_position, contact_tel, " +
+            "qq, enterprise_email from enterprise where enterprise_id = #{enterpriseId}")
+    Enterprise getIntentionAgreementComponentEnterpriseData(Long enterpriseId);
 }

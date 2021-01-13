@@ -52,10 +52,10 @@ public interface ApprovalProcessDao {
     @Update("update approval_process set status = '已删除' where approval_process_id = #{approvalProcessId}")
     int deleteApprovalProcessByApprovalProcessId(Long ApprovalProcessId);
 
-    @Select("select count(*) form approval_process where approval_process_id = #{approvalProcessId} and status != '已删除'")
+    @Select("select count(*) from approval_process where approval_process_id = #{approvalProcessId} and status != '已删除'")
     int isApprovalProcessExist(Long approvalProcessId);
 
-    @Select("select approval_process_id from approval_process where contract_type = #{contractType} and status = '启用'")
-    Long getActiveApprovalProcessIdByContractType(String contractType);
+    @Select("select approval_process_id from approval_process where contract_type = #{contractType} and business_type = #{businessType} and status = '启用'")
+    Long getActiveApprovalProcessIdByContractType(String contractType,String businessType);
 
 }

@@ -37,4 +37,15 @@ public interface SpaceDao {
     @Select("select space_id,space_name from space_data where parent_node_id is null")
     List<Space> getParkList();
 
+    @Select("select * from space_data where parent_node_id = #{spaceId} and (status = '待租' or status = '')")
+    List<Space> lazyLoadIntentionAgreementSpaceLeaf(Long spaceId);
+
+    @Select("select * from space_data where space_id = #{spaceId}")
+    Space getSpaceBySpaceId(Long spaceId);
+
+    @Update("update space_data set status = #{status} where space_id = #{spaceId}")
+    int updateSpaceStatusBySpaceId(Long spaceId,String status);
+
+    @Select("select space_id, space_name, parent_node_id from space_data where space_id = #{spaceId}")
+    Space getSpaceNameAndParentNodeId(Long spaceId);
 }

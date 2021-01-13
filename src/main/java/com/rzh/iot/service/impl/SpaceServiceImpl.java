@@ -1,5 +1,6 @@
 package com.rzh.iot.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.rzh.iot.dao.SpaceDao;
 import com.rzh.iot.model.Space;
 import com.rzh.iot.service.SpaceService;
@@ -67,6 +68,9 @@ public class SpaceServiceImpl implements SpaceService {
                 map.put("msg","该层空间下已存在此空间名称");
                 return map;
             }
+            if (space.getSpaceType().equals("房间")){
+                space.setStatus("待租");
+            }
             spaceDao.createSpace(space);
             map.put("responseCode","200");
             map.put("msg","保存成功");
@@ -105,6 +109,42 @@ public class SpaceServiceImpl implements SpaceService {
     public List<Space> getParkList() {
         return spaceDao.getParkList();
     }
+
+    @Override
+    public JSONObject lazyLoadIntentionAgreementSpaceLeaf(Long spaceId) {
+        JSONObject object = new JSONObject();
+        List<Space> spaces = spaceDao.lazyLoadIntentionAgreementSpaceLeaf(spaceId);
+        for (Space space:spaces){
+            if (space.getParentNodeId() != 0){
+                space.setParentName(spaceDao.getSpaceNameBySpaceId(space.getParentNodeId()));
+            }
+        }
+        System.out.println(spaces.toString());
+        object.put("responseCode",200);
+        object.put("leafData",spaces);
+        return object;
+    }
+
+    @Override
+    public Space getSpaceBySpaceId(Long spaceId) {
+        return spaceDao.getSpaceBySpaceId(spaceId);
+    }
+
+    @Override
+    public boolean updateSpaceStatusBySpaceId(Long spaceId, String status) {
+        if (spaceDao.updateSpaceStatusBySpaceId(spaceId,status) != 0){
+            return true;
+        }else
+        {
+            return false;
+        }
+    }
+
+    @Override
+    public Space getSpaceNameAndParentNodeId(Long spaceId) {
+        return spaceDao.getSpaceNameAndParentNodeId(spaceId);
+    }
+
 
     private List<Space> mountSpaceTree(List<Space> list){
         List<Space> park = new ArrayList<>();

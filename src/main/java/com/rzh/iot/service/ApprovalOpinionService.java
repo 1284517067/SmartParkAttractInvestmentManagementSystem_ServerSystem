@@ -6,7 +6,7 @@ import com.rzh.iot.model.ApprovalOpinion;
 import java.util.HashMap;
 
 public interface ApprovalOpinionService {
-    HashMap<String,Object> createApprovalOpinions(Long formId,String contractType);
+    HashMap<String,Object> createApprovalOpinions(Long formId,String contractType,String businessType);
 
     JSONObject getApprovalOpinionStepByFormId(Long formId,String contractType);
 

@@ -32,6 +32,12 @@ public class Space implements Serializable {
 
     private List<Space> children;
 
+    private String parkName;
+
+    private String buildingName;
+
+    private String floorName;
+
     public Space() {
     }
 
@@ -131,6 +137,30 @@ public class Space implements Serializable {
         this.children = children;
     }
 
+    public String getParkName() {
+        return parkName;
+    }
+
+    public void setParkName(String parkName) {
+        this.parkName = parkName;
+    }
+
+    public String getBuildingName() {
+        return buildingName;
+    }
+
+    public void setBuildingName(String buildingName) {
+        this.buildingName = buildingName;
+    }
+
+    public String getFloorName() {
+        return floorName;
+    }
+
+    public void setFloorName(String floorName) {
+        this.floorName = floorName;
+    }
+
     @Override
     public String toString() {
         return "Space{" +
@@ -146,6 +176,9 @@ public class Space implements Serializable {
                 ", leaseArea=" + leaseArea +
                 ", status='" + status + '\'' +
                 ", children=" + children +
+                ", parkName='" + parkName + '\'' +
+                ", buildingName='" + buildingName + '\'' +
+                ", floorName='" + floorName + '\'' +
                 '}';
     }
 }

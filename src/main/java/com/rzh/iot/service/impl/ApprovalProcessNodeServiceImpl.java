@@ -156,9 +156,9 @@ public class ApprovalProcessNodeServiceImpl implements ApprovalProcessNodeServic
     }
 
     @Override
-    public JSONObject getApprovalProcessNodesByContractType(String contractType) {
+    public JSONObject getApprovalProcessNodesByContractType(String contractType,String businessType) {
         JSONObject object = new JSONObject();
-        Long approvalProcessId = approvalProcessDao.getActiveApprovalProcessIdByContractType(contractType);
+        Long approvalProcessId = approvalProcessDao.getActiveApprovalProcessIdByContractType(contractType,businessType);
         if (approvalProcessId == null){
             return null;
         }

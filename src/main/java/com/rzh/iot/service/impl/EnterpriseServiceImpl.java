@@ -1,5 +1,6 @@
 package com.rzh.iot.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.rzh.iot.dao.EnterpriseDao;
 import com.rzh.iot.model.Enterprise;
 import com.rzh.iot.service.EnterpriseService;
@@ -82,5 +83,44 @@ public class EnterpriseServiceImpl implements EnterpriseService {
         map.put("tableData",enterpriseDao.getEnterpriseListByKey(key));
         map.put("total",enterpriseDao.getSizeOfEnterpriseListByKey(key));
         return map;
+    }
+
+    @Override
+    public JSONObject getEnterpriseComponentTableData(Integer currentPage, Integer limit) {
+        JSONObject object = new JSONObject();
+        int size = enterpriseDao.getSizeOfEnterpriseComponentTableData();
+        object.put("responseCode", 200);
+        object.put("total",size);
+        if (size == 0){
+            return object;
+        }
+        object.put("tableData",enterpriseDao.getEnterpriseComponentTableData((currentPage -1) * limit,limit));
+        return object;
+    }
+
+    @Override
+    public JSONObject getEnterpriseComponentTableDataByKey(String key) {
+        JSONObject object = new JSONObject();
+        int size = enterpriseDao.getSizeOfEnterpriseComponentTableDataByKey(key);
+        object.put("responseCode",200);
+        object.put("total",size);
+        if (size == 0){
+            return object;
+        }
+        object.put("tableData",enterpriseDao.getEnterpriseComponentTableDataByKey(key));
+        return object;
+    }
+
+    @Override
+    public JSONObject getIntentionAgreementComponentEnterpriseData(Long enterpriseId) {
+        JSONObject object = new JSONObject();
+        if (enterpriseDao.isEnterpriseExist(enterpriseId) == 0){
+            object.put("responseCode",400);
+            object.put("msg","该企业不存在");
+            return object;
+        }
+        object.put("responseCode",200);
+        object.put("enterprise",enterpriseDao.getIntentionAgreementComponentEnterpriseData(enterpriseId));
+        return object;
     }
 }

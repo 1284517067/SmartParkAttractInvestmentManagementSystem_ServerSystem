@@ -3,6 +3,7 @@ package com.rzh.iot.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.rzh.iot.model.Space;
+import com.rzh.iot.service.IntentionAgreementRoomService;
 import com.rzh.iot.service.SpaceService;
 import com.rzh.iot.utils.JwtToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,9 @@ public class SpaceController {
 
     @Autowired
     SpaceService spaceService;
+
+    @Autowired
+    IntentionAgreementRoomService intentionAgreementRoomService;
 
     @RequestMapping(value = "/getSpaceTree")
     @JwtToken
@@ -70,5 +74,17 @@ public class SpaceController {
         object.put("responseCode",200);
         object.put("parkList",spaceService.getParkList());
         return object.toJSONString();
+    }
+
+    @RequestMapping(value = "/lazyLoadIntentionAgreementSpaceLeaf")
+    public String lazyLoadIntentionAgreementSpaceLeaf(@RequestParam String spaceId){
+        return spaceService.lazyLoadIntentionAgreementSpaceLeaf(Long.parseLong(spaceId)).toJSONString();
+    }
+
+    @RequestMapping(value = "/getIntentionAgreementComponentSpaceData")
+    @JwtToken
+    @ResponseBody
+    public String getIntentionAgreementComponentSpaceData(@RequestParam String formId){
+        return intentionAgreementRoomService.getIntentionAgreementComponentSpaceData(Long.parseLong(formId)).toJSONString();
     }
 }

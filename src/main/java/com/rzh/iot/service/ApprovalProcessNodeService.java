@@ -22,5 +22,5 @@ public interface ApprovalProcessNodeService {
 
     int getCountOfApprovalProcessNodeByKey(String key);
 
-    JSONObject getApprovalProcessNodesByContractType(String contractType);
+    JSONObject getApprovalProcessNodesByContractType(String contractType,String businessType);
 }

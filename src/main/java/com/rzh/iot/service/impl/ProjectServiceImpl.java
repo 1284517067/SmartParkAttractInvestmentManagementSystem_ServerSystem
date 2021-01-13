@@ -2,11 +2,16 @@ package com.rzh.iot.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.rzh.iot.dao.ProjectDao;
+import com.rzh.iot.model.IntentionRegistrationForm;
 import com.rzh.iot.model.Project;
+import com.rzh.iot.service.IntentionRegistrationFormService;
 import com.rzh.iot.service.ProjectService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -15,6 +20,9 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Autowired
     ProjectDao projectDao;
+
+    @Autowired
+    IntentionRegistrationFormService intentionRegistrationFormService;
 
     @Override
     public HashMap<String,Object> getProjectListByLimit(Integer currentPage, Integer limit) {
@@ -54,6 +62,15 @@ public class ProjectServiceImpl implements ProjectService {
             projectDao.createProject(project);
             map.put("responseCode",200);
             map.put("msg","保存成功");
+            /**
+             * 项目创建成功后，自动为项目创建一个”待发“的意向登记
+             * */
+            IntentionRegistrationForm form = new IntentionRegistrationForm();
+            BeanUtils.copyProperties(project,form);
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            form.setApplyDate(format.format(new Date()));
+            intentionRegistrationFormService.updateIntentionRegistrationForm(form);
+
         }else {
             /**
              * 更新

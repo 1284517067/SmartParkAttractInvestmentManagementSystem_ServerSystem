@@ -3,18 +3,18 @@ package com.rzh.iot.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.rzh.iot.dao.ApprovalOpinionDao;
 import com.rzh.iot.dao.ApprovalProcessDao;
+import com.rzh.iot.dao.IntentionAgreementDao;
 import com.rzh.iot.dao.IntentionRegistrationFormDao;
 import com.rzh.iot.model.*;
 import com.rzh.iot.service.*;
+import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class ApprovalOpinionServiceImpl implements ApprovalOpinionService {
@@ -40,10 +40,19 @@ public class ApprovalOpinionServiceImpl implements ApprovalOpinionService {
     @Autowired
     EnterpriseService enterpriseService;
 
+    @Autowired
+    IntentionAgreementService intentionAgreementService;
+
+    @Autowired
+    IntentionAgreementRoomService intentionAgreementRoomService;
+
+    @Autowired
+    IntentionAgreementDao intentionAgreementDao;
+
     @Override
-    public HashMap<String, Object> createApprovalOpinions(Long formId, String contractType) {
+    public HashMap<String, Object> createApprovalOpinions(Long formId, String contractType,String businessType) {
         HashMap<String,Object> map = new HashMap<>();
-        JSONObject object = approvalProcessNodeService.getApprovalProcessNodesByContractType(contractType);
+        JSONObject object = approvalProcessNodeService.getApprovalProcessNodesByContractType(contractType,businessType);
         if (object == null){
             map.put("responseCode",404);
             map.put("msg","该合同类型没有启用的审批流");
@@ -142,6 +151,10 @@ public class ApprovalOpinionServiceImpl implements ApprovalOpinionService {
                 formName = intentionRegistrationForm.getFormName();
                 principal1 = intentionRegistrationForm.getPrincipal();
                 break;
+            case "意向协议":
+                IntentionAgreement intentionAgreement = intentionAgreementService.getIntentionAgreementDetail(formId).getObject("form",IntentionAgreement.class);
+                formName = intentionAgreement.getFormName();
+                principal1 = intentionAgreement.getApplicant();
         }
 
 
@@ -172,18 +185,40 @@ public class ApprovalOpinionServiceImpl implements ApprovalOpinionService {
             /**
              * 审批流程到达最后一个节点，结束该审批流
              * */
-            intentionRegistrationFormDao.updateApprovalStatus(formId,"审批完成");
-
             /**
-             * 意向登记审批完成创建企业档案
+             * 审批完成后各个合同的操作
              * */
-            if (contractType == "意向登记"){
-                HashMap<String,Object> map = initEnterprise(formId);
-                if ((int)map.get("responseCode") == 400){
-                    object.put("responseCode",map.get("responseCode"));
-                    object.put("msg",map.get("msg"));
-                    return object;
-                }
+            switch (contractType){
+                case "意向登记":
+
+                    intentionRegistrationFormDao.updateApprovalStatus(formId,"审批完成");
+
+                    HashMap<String,Object> map = initEnterprise(formId);
+                    if ((int)map.get("responseCode") == 400){
+                        object.put("responseCode",map.get("responseCode"));
+                        object.put("msg",map.get("msg"));
+                        return object;
+                    }
+                    break;
+                case "意向协议":
+
+                    intentionAgreementDao.updateIntentionAgreementApprovalStatus(formId,"审批完成");
+
+                    IntentionAgreement intentionAgreement = intentionAgreementService.getIntentionAgreementDetail(formId).getObject("form",IntentionAgreement.class);
+                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                    try{
+                        Date deadline = format.parse(intentionAgreement.getDeadline());
+                        if (deadline.getTime() >= format.parse(format.format(new Date())).getTime()){
+                            List<Space> spaces = intentionAgreementRoomService.getSpacesByIntentionAgreement(intentionAgreement.getFormId());
+                            intentionAgreementRoomService.updateIntentionAgreementRoom(intentionAgreement.getFormId(),spaces,intentionAgreement.getDeadline());
+                        }
+                    }catch (Exception e){
+                        object.put("responseCode",400);
+                        object.put("msg",e.getMessage());
+                        return object;
+                    }
+                    break;
+
             }
         }
         object.put("responseCode",200);

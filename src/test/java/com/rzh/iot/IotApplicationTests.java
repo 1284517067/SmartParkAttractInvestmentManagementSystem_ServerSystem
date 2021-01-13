@@ -6,8 +6,10 @@ import com.rzh.iot.model.Space;
 import com.rzh.iot.model.User;
 import com.rzh.iot.service.ApprovalOpinionService;
 import com.rzh.iot.service.ApprovalProcessNodeService;
+import com.rzh.iot.service.IntentionRegistrationFormService;
 import com.rzh.iot.service.MenuService;
 import com.rzh.iot.service.impl.ApprovalOpinionServiceImpl;
+import com.rzh.iot.utils.Common;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -40,6 +42,10 @@ class IotApplicationTests {
     ProjectDao projectDao;
     @Resource
     ApprovalOpinionService approvalOpinionService;
+    @Resource
+    IntentionRegistrationFormService intentionRegistrationFormService;
+    @Resource
+    Common common;
 
 
     @Test
@@ -92,26 +98,21 @@ class IotApplicationTests {
 
     @Test
     void testSpaceDao(){
-        Space space = new Space();
-        space.setSpaceName("B1栋");
-        Long i = new Long("1");
-        space.setParentNodeId(i);
-        System.out.println(space.toString());
-        System.out.println(spaceDao.isSpaceExist(space));
+        Long l = new Long(1);
+        List<Space> spaces = spaceDao.lazyLoadIntentionAgreementSpaceLeaf(l);
+        System.out.println(spaces.toString());
     }
 
     @Test
     void testEnterpriseDao(){
-/*
-        System.out.println(enterpriseDao.getEnterpriseList().toString());
-*/
+        String str = "scaoihc(1)";
+        str = str.replaceAll("(1)","2");
+        System.out.println(str);
     }
 
     @Test
     void testProject(){
-
-        Long l = new Long(2);
-        approvalOpinionService.initEnterprise(l);
+        System.out.println(common.mountFormName("2021-01-07-测试重名-意向登记","意向登记"));
     }
 
 

@@ -8,6 +8,7 @@ import com.rzh.iot.model.Message;
 import com.rzh.iot.service.ApprovalOpinionService;
 import com.rzh.iot.service.IntentionRegistrationFormService;
 import com.rzh.iot.service.MessageService;
+import com.rzh.iot.utils.Common;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,9 @@ IntentionRegistrationFormServiceImpl implements IntentionRegistrationFormService
 
     @Autowired
     MessageService messageService;
+
+    @Autowired
+    Common common;
 
     @Override
     public JSONObject getIntentionRegistrationFormTableData(Integer currentPage, Integer limit, String status) {
@@ -50,11 +54,9 @@ IntentionRegistrationFormServiceImpl implements IntentionRegistrationFormService
              * */
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             String formName = format.format(new Date()) + "-" + form.getEnterpriseName() + "-" + "意向登记";
-            form.setFormName(formName);
+            form.setFormName(common.mountFormName(formName,"意向登记"));
             form.setStatus("待发");
             intentionRegistrationFormDao.createIntentionRegistrationForm(form);
-            object.put("responseCode",200);
-            object.put("msg","保存成功");
         }else {
             /**
              * 更新
@@ -65,9 +67,9 @@ IntentionRegistrationFormServiceImpl implements IntentionRegistrationFormService
                 return object;
             }
             intentionRegistrationFormDao.updateIntentionRegistrationForm(form);
-            object.put("responseCode",200);
-            object.put("msg","保存成功");
         }
+        object.put("responseCode",200);
+        object.put("msg","保存成功");
         return object;
     }
 
@@ -108,7 +110,7 @@ IntentionRegistrationFormServiceImpl implements IntentionRegistrationFormService
         /**
          * 根据启用审批流创建节点
          * */
-        HashMap<String,Object> map =  approvalOpinionService.createApprovalOpinions(form.getFormId(),"意向登记");
+        HashMap<String,Object> map =  approvalOpinionService.createApprovalOpinions(form.getFormId(),"意向登记","新签");
 
         /**
          * 若无启用审批流，则默认审批完成，创建企业档案
@@ -124,9 +126,18 @@ IntentionRegistrationFormServiceImpl implements IntentionRegistrationFormService
             return object;
         }
         /**
-         * 获取审批流里首个待审批按钮
+         * 获取审批流里首个待审批节点
          * */
         ApprovalOpinion approvalOpinion = approvalOpinionService.getFirstWaitingApprovalOpinion(form.getFormId(),"意向登记");
+        if (approvalOpinion == null){
+            /**
+             * 若无审批节点，则视为审批完成
+             * */
+            intentionRegistrationFormDao.updateStatusByFormId(form.getFormId(),"审批完成");
+            object.put("responseCode",200);
+            object.put("msg","送办成功");
+            return object;
+        }
         intentionRegistrationFormDao.updateApprovalStatus(form.getFormId(),"等待" + approvalOpinion.getApprovalProcessNodeName());
         Message message = new Message();
         message.setFormId(form.getFormId());

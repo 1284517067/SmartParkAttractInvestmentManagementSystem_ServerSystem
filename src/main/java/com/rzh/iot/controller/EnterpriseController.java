@@ -66,4 +66,25 @@ public class EnterpriseController {
         object.put("total",map.get("total"));
         return object.toJSONString();
     }
+
+    @RequestMapping(value = "/getEnterpriseComponentTableData")
+    @JwtToken
+    @ResponseBody
+    public String getEnterpriseComponentTableData(@RequestParam String currentPage, @RequestParam String limit){
+        return enterpriseService.getEnterpriseComponentTableData(Integer.parseInt(currentPage),Integer.parseInt(limit)).toJSONString();
+    }
+
+    @RequestMapping(value = "/getEnterpriseComponentTableDataByKey")
+    @JwtToken
+    @ResponseBody
+    public String getEnterpriseComponentTableDataByKey(@RequestParam String searchKey){
+        return enterpriseService.getEnterpriseComponentTableDataByKey(searchKey).toJSONString();
+    }
+
+    @RequestMapping(value = "/getIntentionAgreementComponentEnterpriseData")
+    @JwtToken
+    @ResponseBody
+    public String getIntentionAgreementComponentEnterpriseData(@RequestParam String enterpriseId){
+        return enterpriseService.getIntentionAgreementComponentEnterpriseData(Long.parseLong(enterpriseId)).toJSONString();
+    }
 }

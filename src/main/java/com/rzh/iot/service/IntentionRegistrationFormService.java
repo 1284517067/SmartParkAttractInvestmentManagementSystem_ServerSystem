@@ -16,4 +16,5 @@ public interface IntentionRegistrationFormService {
     JSONObject getIntentionRegistrationFormTableByKey(String key,String status);
 
     JSONObject deleteIntentionRegistrationForm(Long formId);
+
 }

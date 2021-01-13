@@ -1,5 +1,6 @@
 package com.rzh.iot.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.rzh.iot.model.Space;
 
 import java.util.HashMap;
@@ -17,4 +18,11 @@ public interface SpaceService {
 
     List<Space> getParkList();
 
+    JSONObject lazyLoadIntentionAgreementSpaceLeaf(Long spaceId);
+
+    Space getSpaceBySpaceId(Long spaceId);
+
+    boolean updateSpaceStatusBySpaceId(Long spaceId, String status);
+
+    Space getSpaceNameAndParentNodeId(Long spaceId);
 }

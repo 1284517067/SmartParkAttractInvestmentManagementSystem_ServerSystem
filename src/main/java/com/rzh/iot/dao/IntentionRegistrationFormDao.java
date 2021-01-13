@@ -76,4 +76,7 @@ public interface IntentionRegistrationFormDao {
 
     @Update("update intention_registration_form set approval_status = #{approvalStatus} where form_id = #{formId}")
     int updateApprovalStatus(Long formId,String approvalStatus);
+
+    @Select("select count(*) from intention_registration_form where form_name = #{formName}")
+    int isNameExist(String formName);
 }

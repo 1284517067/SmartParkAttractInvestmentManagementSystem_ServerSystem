@@ -55,6 +55,10 @@ public class Enterprise implements Serializable {
 
     private String enterpriseTel;
 
+    private String source;
+
+    private String qq;
+
     public Enterprise() {
     }
 
@@ -77,7 +81,7 @@ public class Enterprise implements Serializable {
                 ", registeredCapital=" + registeredCapital +
                 ", industryTypeId=" + industryTypeId +
                 ", industryTypeName='" + industryTypeName + '\'' +
-                ", enterpriseArea=" + enterpriseArea +
+                ", enterpriseArea='" + enterpriseArea + '\'' +
                 ", businessRegistrationType='" + businessRegistrationType + '\'' +
                 ", enterpriseIntroduction='" + enterpriseIntroduction + '\'' +
                 ", enterPark=" + enterPark +
@@ -85,6 +89,8 @@ public class Enterprise implements Serializable {
                 ", recordDate='" + recordDate + '\'' +
                 ", contractType='" + contractType + '\'' +
                 ", enterpriseTel='" + enterpriseTel + '\'' +
+                ", source='" + source + '\'' +
+                ", qq='" + qq + '\'' +
                 '}';
     }
 
@@ -278,5 +284,21 @@ public class Enterprise implements Serializable {
 
     public void setEnterpriseTel(String enterpriseTel) {
         this.enterpriseTel = enterpriseTel;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public String getQq() {
+        return qq;
+    }
+
+    public void setQq(String qq) {
+        this.qq = qq;
     }
 }
