@@ -22,7 +22,7 @@ public class IntentionAgreement implements Serializable {
 
      private String deadline;
 
-     private String applyDate;
+     private String signDate;
 
      private String applicant;
 
@@ -43,7 +43,6 @@ public class IntentionAgreement implements Serializable {
      public IntentionAgreement() {
      }
 
-
      @Override
      public String toString() {
           return "IntentionAgreement{" +
@@ -54,7 +53,7 @@ public class IntentionAgreement implements Serializable {
                   ", enterprise=" + enterprise +
                   ", earnest=" + earnest +
                   ", deadline='" + deadline + '\'' +
-                  ", applyDate='" + applyDate + '\'' +
+                  ", signDate='" + signDate + '\'' +
                   ", applicant='" + applicant + '\'' +
                   ", spaces=" + spaces +
                   ", remark='" + remark + '\'' +
@@ -129,12 +128,12 @@ public class IntentionAgreement implements Serializable {
           this.deadline = deadline;
      }
 
-     public String getApplyDate() {
-          return applyDate;
+     public String getSignDate() {
+          return signDate;
      }
 
-     public void setApplyDate(String applyDate) {
-          this.applyDate = applyDate;
+     public void setSignDate(String signDate) {
+          this.signDate = signDate;
      }
 
      public String getApplicant() {

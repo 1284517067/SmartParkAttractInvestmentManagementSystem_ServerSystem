@@ -38,6 +38,10 @@ public class Space implements Serializable {
 
     private String floorName;
 
+    private Long enterpriseId;
+
+    private String enterpriseName;
+
     public Space() {
     }
 
@@ -161,6 +165,22 @@ public class Space implements Serializable {
         this.floorName = floorName;
     }
 
+    public Long getEnterpriseId() {
+        return enterpriseId;
+    }
+
+    public void setEnterpriseId(Long enterpriseId) {
+        this.enterpriseId = enterpriseId;
+    }
+
+    public String getEnterpriseName() {
+        return enterpriseName;
+    }
+
+    public void setEnterpriseName(String enterpriseName) {
+        this.enterpriseName = enterpriseName;
+    }
+
     @Override
     public String toString() {
         return "Space{" +
@@ -179,6 +199,8 @@ public class Space implements Serializable {
                 ", parkName='" + parkName + '\'' +
                 ", buildingName='" + buildingName + '\'' +
                 ", floorName='" + floorName + '\'' +
+                ", enterpriseId=" + enterpriseId +
+                ", enterpriseName='" + enterpriseName + '\'' +
                 '}';
     }
 }

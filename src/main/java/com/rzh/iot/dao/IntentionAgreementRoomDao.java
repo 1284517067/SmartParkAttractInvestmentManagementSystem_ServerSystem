@@ -21,6 +21,7 @@ public interface IntentionAgreementRoomDao {
             "</script>")
     int createIntentionAgreementRooms(@Param(value = "rooms") List<IntentionAgreementRoom> rooms);
 
+
     @Delete("delete from intention_agreement_room where form_id = #{formId}")
     int deleteIntentionAgreementRooms(Long formId);
 }

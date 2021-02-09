@@ -25,8 +25,12 @@ public class IntentionAgreementRoomServiceImpl implements IntentionAgreementRoom
     @Autowired
     SpaceService spaceService;
 
+
+    /**
+     * 更新意向协议中的房间信息并更新房间状态
+     * */
     @Override
-    public JSONObject updateIntentionAgreementRoom(Long formId, List<Space> spaces,String deadline) {
+    public JSONObject updateIntentionAgreementRoom(Long formId, List<Space> spaces, Long enterpriseId) {
         JSONObject object = new JSONObject();
         if (intentionAgreementDao.isFormExist(formId) == 0){
             object.put("responseCode",400);
@@ -34,19 +38,17 @@ public class IntentionAgreementRoomServiceImpl implements IntentionAgreementRoom
             return object;
         }
 
+        /**
+         * 还原历史记录里的房间状态
+         * */
         List<Space> oldSpaces = getSpacesByIntentionAgreement(formId);
-
-        for (Space space : oldSpaces){
-            if (!spaceService.updateSpaceStatusBySpaceId(space.getSpaceId(),"待租")){
-                object.put("responseCode",400);
-                object.put("msg","房间状态更新时发生错误");
-                return object;
-            }
-        }
-
+        resetSpaces(oldSpaces);
+        /**
+         * 更新新的房间状态
+         * */
         List<IntentionAgreementRoom> rooms = new ArrayList<>();
         for (Space space : spaces){
-            if (!spaceService.updateSpaceStatusBySpaceId(space.getSpaceId(),"意向中")){
+            if (!spaceService.updateSpaceStatusBySpaceId(space.getSpaceId(),"意向中") || !spaceService.updateSpaceEnterpriseIdBySpaceId(space.getSpaceId(),enterpriseId)){
                 object.put("responseCode",400);
                 object.put("msg","房间状态更新时发生错误");
                 return object;
@@ -65,6 +67,10 @@ public class IntentionAgreementRoomServiceImpl implements IntentionAgreementRoom
         return object;
     }
 
+
+    /**
+     * 只更新意向协议中的房间信息
+     * */
     @Override
     public JSONObject updateIntentionAgreementRooms(Long formId, List<Space> spaces) {
         JSONObject object = new JSONObject();
@@ -118,5 +124,11 @@ public class IntentionAgreementRoomServiceImpl implements IntentionAgreementRoom
         return object;
     }
 
+    private void resetSpaces(List<Space> spaces){
+        for (Space space :spaces){
+            spaceService.updateSpaceStatusBySpaceId(space.getSpaceId(),"待租");
+            spaceService.updateSpaceEnterpriseIdBySpaceId(space.getSpaceId(),null);
+        }
+    }
 
 }

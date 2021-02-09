@@ -93,6 +93,6 @@ public interface EnterpriseDao {
     int getSizeOfEnterpriseComponentTableDataByKey(String key);
 
     @Select("select contract_type, source, enterprise_area, industry_type_id, contact, contact_department, contact_position, contact_tel, " +
-            "qq, enterprise_email from enterprise where enterprise_id = #{enterpriseId}")
+            "qq, enterprise_email, business_registration_type from enterprise where enterprise_id = #{enterpriseId}")
     Enterprise getIntentionAgreementComponentEnterpriseData(Long enterpriseId);
 }

@@ -40,11 +40,18 @@ public interface SpaceDao {
     @Select("select * from space_data where parent_node_id = #{spaceId} and (status = '待租' or status = '')")
     List<Space> lazyLoadIntentionAgreementSpaceLeaf(Long spaceId);
 
+
+    @Select("select * from space_data where parent_node_id = #{spaceId} and (status = '待租' or status = '' or (status = '意向中' and enterprise_id = #{enterpriseId}))")
+    List<Space> lazyLoadILeaseContractSpaceLeaf(Long spaceId, Long enterpriseId);
+
     @Select("select * from space_data where space_id = #{spaceId}")
     Space getSpaceBySpaceId(Long spaceId);
 
     @Update("update space_data set status = #{status} where space_id = #{spaceId}")
     int updateSpaceStatusBySpaceId(Long spaceId,String status);
+
+    @Update("update space_data set enterprise_id = #{enterpriseId} where space_id = #{spaceId}")
+    int updateSpaceEnterpriseIdBySpaceId(Long enterpriseId, Long spaceId);
 
     @Select("select space_id, space_name, parent_node_id from space_data where space_id = #{spaceId}")
     Space getSpaceNameAndParentNodeId(Long spaceId);

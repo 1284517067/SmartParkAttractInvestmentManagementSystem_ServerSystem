@@ -1,10 +1,7 @@
 package com.rzh.iot.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.rzh.iot.dao.ApprovalOpinionDao;
-import com.rzh.iot.dao.ApprovalProcessDao;
-import com.rzh.iot.dao.IntentionAgreementDao;
-import com.rzh.iot.dao.IntentionRegistrationFormDao;
+import com.rzh.iot.dao.*;
 import com.rzh.iot.model.*;
 import com.rzh.iot.service.*;
 import org.aspectj.lang.annotation.Pointcut;
@@ -13,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Type;
+import java.rmi.dgc.Lease;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -48,6 +46,15 @@ public class ApprovalOpinionServiceImpl implements ApprovalOpinionService {
 
     @Autowired
     IntentionAgreementDao intentionAgreementDao;
+
+    @Autowired
+    LeaseContractService leaseContractService;
+
+    @Autowired
+    LeaseContractDao leaseContractDao;
+
+    @Autowired
+    LeaseContractRoomService leaseContractRoomService;
 
     @Override
     public HashMap<String, Object> createApprovalOpinions(Long formId, String contractType,String businessType) {
@@ -155,6 +162,12 @@ public class ApprovalOpinionServiceImpl implements ApprovalOpinionService {
                 IntentionAgreement intentionAgreement = intentionAgreementService.getIntentionAgreementDetail(formId).getObject("form",IntentionAgreement.class);
                 formName = intentionAgreement.getFormName();
                 principal1 = intentionAgreement.getApplicant();
+                break;
+            case "租赁合同":
+                LeaseContract leaseContract = leaseContractService.getLeaseContractFormData(formId).getObject("form",LeaseContract.class);
+                formName = leaseContract.getFormName();
+                principal1 = leaseContract.getApplicant();
+                break;
         }
 
 
@@ -166,7 +179,17 @@ public class ApprovalOpinionServiceImpl implements ApprovalOpinionService {
             /**
              * 更新合同状态
              * */
-            intentionRegistrationFormDao.updateApprovalStatus(formId,"等待" + approvalOpinion.getApprovalProcessNodeName());
+            switch (contractType){
+                case "意向登记":
+                    intentionRegistrationFormDao.updateApprovalStatus(formId,"等待" + approvalOpinion.getApprovalProcessNodeName());
+                    break;
+                case "意向协议":
+                    intentionAgreementDao.updateIntentionAgreementApprovalStatus(formId,"等待" + approvalOpinion.getApprovalProcessNodeName());
+                    break;
+                case "租赁合同":
+                    leaseContractDao.updateLeaseContractApprovalStatusByFormId(formId,"等待"+ approvalOpinion.getApprovalProcessNodeName());
+                    break;
+            }
             /**
              * 创建消息对象
              * */
@@ -188,6 +211,7 @@ public class ApprovalOpinionServiceImpl implements ApprovalOpinionService {
             /**
              * 审批完成后各个合同的操作
              * */
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             switch (contractType){
                 case "意向登记":
 
@@ -201,17 +225,27 @@ public class ApprovalOpinionServiceImpl implements ApprovalOpinionService {
                     }
                     break;
                 case "意向协议":
-
                     intentionAgreementDao.updateIntentionAgreementApprovalStatus(formId,"审批完成");
-
                     IntentionAgreement intentionAgreement = intentionAgreementService.getIntentionAgreementDetail(formId).getObject("form",IntentionAgreement.class);
-                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                     try{
                         Date deadline = format.parse(intentionAgreement.getDeadline());
                         if (deadline.getTime() >= format.parse(format.format(new Date())).getTime()){
                             List<Space> spaces = intentionAgreementRoomService.getSpacesByIntentionAgreement(intentionAgreement.getFormId());
-                            intentionAgreementRoomService.updateIntentionAgreementRoom(intentionAgreement.getFormId(),spaces,intentionAgreement.getDeadline());
+                            intentionAgreementRoomService.updateIntentionAgreementRoom(intentionAgreement.getFormId(),spaces,intentionAgreement.getEnterpriseId());
                         }
+                    }catch (Exception e){
+                        object.put("responseCode",400);
+                        object.put("msg",e.getMessage());
+                        return object;
+                    }
+                    break;
+                case "租赁合同":
+                    leaseContractDao.updateLeaseContractApprovalStatusByFormId(formId,"审批完成");
+                    LeaseContract leaseContract  = leaseContractService.getLeaseContractFormData(formId).getObject("form", LeaseContract.class);
+                    try {
+                        List<LeaseContractRoom> rooms = leaseContractRoomService.getLeaseContractRoomsByLeaseContractFormId(formId);
+                        leaseContractRoomService.updateLeaseContractRoom(formId,rooms,leaseContract.getEnterpriseId());
+
                     }catch (Exception e){
                         object.put("responseCode",400);
                         object.put("msg",e.getMessage());

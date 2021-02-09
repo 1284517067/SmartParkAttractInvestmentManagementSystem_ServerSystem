@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.rzh.iot.model.Space;
 import com.rzh.iot.service.IntentionAgreementRoomService;
+import com.rzh.iot.service.LeaseContractRoomService;
 import com.rzh.iot.service.SpaceService;
 import com.rzh.iot.utils.JwtToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,9 @@ public class SpaceController {
 
     @Autowired
     IntentionAgreementRoomService intentionAgreementRoomService;
+
+    @Autowired
+    LeaseContractRoomService leaseContractRoomService;
 
     @RequestMapping(value = "/getSpaceTree")
     @JwtToken
@@ -77,8 +81,8 @@ public class SpaceController {
     }
 
     @RequestMapping(value = "/lazyLoadIntentionAgreementSpaceLeaf")
-    public String lazyLoadIntentionAgreementSpaceLeaf(@RequestParam String spaceId){
-        return spaceService.lazyLoadIntentionAgreementSpaceLeaf(Long.parseLong(spaceId)).toJSONString();
+    public String lazyLoadIntentionAgreementSpaceLeaf(@RequestParam String spaceId, @RequestParam String enterpriseId){
+        return spaceService.lazyLoadIntentionAgreementSpaceLeaf(Long.parseLong(spaceId), Long.parseLong(enterpriseId)).toJSONString();
     }
 
     @RequestMapping(value = "/getIntentionAgreementComponentSpaceData")
@@ -86,5 +90,12 @@ public class SpaceController {
     @ResponseBody
     public String getIntentionAgreementComponentSpaceData(@RequestParam String formId){
         return intentionAgreementRoomService.getIntentionAgreementComponentSpaceData(Long.parseLong(formId)).toJSONString();
+    }
+
+    @RequestMapping(value = "/getLeaseContractSpaceData")
+    @JwtToken
+    @ResponseBody
+    public String getLeaseContractSpaceData(@RequestParam String formId){
+        return leaseContractRoomService.getLeaseContractSpaceData(Long.parseLong(formId)).toJSONString();
     }
 }

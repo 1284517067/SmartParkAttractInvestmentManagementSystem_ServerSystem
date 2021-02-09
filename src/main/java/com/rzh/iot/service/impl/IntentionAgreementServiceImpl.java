@@ -5,6 +5,7 @@ import com.rzh.iot.dao.IntentionAgreementDao;
 import com.rzh.iot.model.ApprovalOpinion;
 import com.rzh.iot.model.IntentionAgreement;
 import com.rzh.iot.model.Message;
+import com.rzh.iot.model.Space;
 import com.rzh.iot.service.ApprovalOpinionService;
 import com.rzh.iot.service.IntentionAgreementRoomService;
 import com.rzh.iot.service.IntentionAgreementService;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 @Service
 public class IntentionAgreementServiceImpl implements IntentionAgreementService {
@@ -55,7 +57,9 @@ public class IntentionAgreementServiceImpl implements IntentionAgreementService 
             /**
              * 新增
              * */
-            intentionAgreement.setStatus("待发");
+            if (intentionAgreement.getStatus() != "已发"){
+                intentionAgreement.setStatus("待发");
+            }
             intentionAgreement.setResetFlag(new Integer(0));
             intentionAgreement.setFormName(common.mountFormName(intentionAgreement.getFormName(),"意向协议"));
             intentionAgreementDao.createIntentionAgreement(intentionAgreement);
@@ -110,10 +114,7 @@ public class IntentionAgreementServiceImpl implements IntentionAgreementService 
          * 若无启用审批流，则默认审批完成
          * */
         if ((int)map.get("responseCode") == 404) {
-            intentionAgreementDao.updateIntentionAgreementApprovalStatus(intentionAgreement.getFormId(),"审批完成");
-            object.put("responseCode",200);
-            object.put("msg","送办成功");
-            return object;
+            return completeIntentionApproval(intentionAgreement, object);
         }
 
         /**
@@ -124,10 +125,7 @@ public class IntentionAgreementServiceImpl implements IntentionAgreementService 
             /**
              * 若无审批节点，则视为审批完成
              * */
-            intentionAgreementDao.updateIntentionAgreementApprovalStatus(intentionAgreement.getFormId(),"审批完成");
-            object.put("responseCode",200);
-            object.put("msg","送办成功");
-            return object;
+            return completeIntentionApproval(intentionAgreement, object);
         }
         intentionAgreementDao.updateIntentionAgreementApprovalStatus(intentionAgreement.getFormId(),"等待"+ approvalOpinion.getApprovalProcessNodeName());
         Message message = new Message();
@@ -145,6 +143,25 @@ public class IntentionAgreementServiceImpl implements IntentionAgreementService 
         if ((int)map1.get("responseCode") == 400){
             object.put("responseCode",map1.get("responseCode"));
             object.put("msg",map1.get("msg"));
+            return object;
+        }
+        object.put("responseCode",200);
+        object.put("msg","送办成功");
+        return object;
+    }
+
+    private JSONObject completeIntentionApproval(IntentionAgreement intentionAgreement, JSONObject object) {
+        intentionAgreementDao.updateIntentionAgreementApprovalStatus(intentionAgreement.getFormId(),"审批完成");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        try{
+            Date deadline = format.parse(intentionAgreement.getDeadline());
+            if (deadline.getTime() >= format.parse(format.format(new Date())).getTime()){
+                List<Space> spaces = intentionAgreementRoomService.getSpacesByIntentionAgreement(intentionAgreement.getFormId());
+                intentionAgreementRoomService.updateIntentionAgreementRoom(intentionAgreement.getFormId(),spaces,intentionAgreement.getEnterpriseId());
+            }
+        }catch (Exception e){
+            object.put("responseCode",400);
+            object.put("msg",e.getMessage());
             return object;
         }
         object.put("responseCode",200);

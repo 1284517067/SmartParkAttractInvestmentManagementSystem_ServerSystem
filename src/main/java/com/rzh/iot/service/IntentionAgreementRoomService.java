@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface IntentionAgreementRoomService {
 
-    JSONObject updateIntentionAgreementRoom(Long formId, List<Space> spaces,String deadline);
+    JSONObject updateIntentionAgreementRoom(Long formId, List<Space> spaces, Long enterpriseId);
 
     JSONObject updateIntentionAgreementRooms(Long formId, List<Space> spaces);
 

@@ -2,6 +2,7 @@ package com.rzh.iot.utils;
 
 import com.rzh.iot.dao.IntentionAgreementDao;
 import com.rzh.iot.dao.IntentionRegistrationFormDao;
+import com.rzh.iot.dao.LeaseContractDao;
 import com.rzh.iot.service.IntentionRegistrationFormService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -14,8 +15,12 @@ public class Common {
 
     @Autowired
     IntentionRegistrationFormDao intentionRegistrationFormDao;
+
     @Autowired
     IntentionAgreementDao intentionAgreementDao;
+
+    @Autowired
+    LeaseContractDao leaseContractDao;
 
 
     public String mountFormName(String formName,String contractType){
@@ -28,6 +33,8 @@ public class Common {
             case "意向协议":
                 count = intentionAgreementDao.isNameExist(formName);
                 break;
+            case "租赁合同":
+                count = leaseContractDao.isNameExist(formName);
         }
         if (count != 0){
             Pattern r = Pattern.compile(str);

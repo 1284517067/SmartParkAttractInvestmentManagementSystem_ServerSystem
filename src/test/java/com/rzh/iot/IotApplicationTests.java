@@ -98,9 +98,7 @@ class IotApplicationTests {
 
     @Test
     void testSpaceDao(){
-        Long l = new Long(1);
-        List<Space> spaces = spaceDao.lazyLoadIntentionAgreementSpaceLeaf(l);
-        System.out.println(spaces.toString());
+
     }
 
     @Test
@@ -112,7 +110,7 @@ class IotApplicationTests {
 
     @Test
     void testProject(){
-        System.out.println(common.mountFormName("2021-01-07-测试重名-意向登记","意向登记"));
+        spaceDao.updateSpaceEnterpriseIdBySpaceId(new Long(4),null);
     }
 
 

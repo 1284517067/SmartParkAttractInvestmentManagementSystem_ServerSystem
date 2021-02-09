@@ -18,11 +18,13 @@ public interface SpaceService {
 
     List<Space> getParkList();
 
-    JSONObject lazyLoadIntentionAgreementSpaceLeaf(Long spaceId);
+    JSONObject lazyLoadIntentionAgreementSpaceLeaf(Long spaceId,Long enterpriseId);
 
     Space getSpaceBySpaceId(Long spaceId);
 
     boolean updateSpaceStatusBySpaceId(Long spaceId, String status);
+
+    boolean updateSpaceEnterpriseIdBySpaceId(Long spaceId, Long enterpriseId);
 
     Space getSpaceNameAndParentNodeId(Long spaceId);
 }

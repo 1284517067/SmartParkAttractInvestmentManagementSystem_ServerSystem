@@ -111,9 +111,15 @@ public class SpaceServiceImpl implements SpaceService {
     }
 
     @Override
-    public JSONObject lazyLoadIntentionAgreementSpaceLeaf(Long spaceId) {
+    public JSONObject lazyLoadIntentionAgreementSpaceLeaf(Long spaceId, Long enterpriseId) {
         JSONObject object = new JSONObject();
-        List<Space> spaces = spaceDao.lazyLoadIntentionAgreementSpaceLeaf(spaceId);
+
+        List<Space> spaces ;
+        if (enterpriseId == null){
+            spaces = spaceDao.lazyLoadIntentionAgreementSpaceLeaf(spaceId);
+        }else {
+            spaces = spaceDao.lazyLoadILeaseContractSpaceLeaf(spaceId,enterpriseId);
+        }
         for (Space space:spaces){
             if (space.getParentNodeId() != 0){
                 space.setParentName(spaceDao.getSpaceNameBySpaceId(space.getParentNodeId()));
@@ -134,10 +140,16 @@ public class SpaceServiceImpl implements SpaceService {
     public boolean updateSpaceStatusBySpaceId(Long spaceId, String status) {
         if (spaceDao.updateSpaceStatusBySpaceId(spaceId,status) != 0){
             return true;
-        }else
-        {
-            return false;
         }
+        return false;
+    }
+
+    @Override
+    public boolean updateSpaceEnterpriseIdBySpaceId(Long spaceId, Long enterpriseId) {
+        if (spaceDao.updateSpaceEnterpriseIdBySpaceId(enterpriseId,spaceId) != 0){
+            return true;
+        }
+        return false;
     }
 
     @Override
