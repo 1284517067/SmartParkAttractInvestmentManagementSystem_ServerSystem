@@ -1,6 +1,7 @@
 package com.rzh.iot.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.rzh.iot.dao.EnterpriseDao;
 import com.rzh.iot.dao.LeaseContractDao;
 import com.rzh.iot.model.ApprovalOpinion;
 import com.rzh.iot.model.LeaseContract;
@@ -35,6 +36,9 @@ public class LeaseContractServiceImpl implements LeaseContractService {
 
     @Autowired
     MessageService messageService;
+
+    @Autowired
+    EnterpriseDao enterpriseDao;
 
     @Override
     public JSONObject getLeaseContractTableData(Integer currentPage, Integer limit, String status) {
@@ -113,8 +117,13 @@ public class LeaseContractServiceImpl implements LeaseContractService {
             object.put("msg","送办成功");
             return object;
         }
-
+        /**
+         * 更新审批状态
+         * */
         leaseContractDao.updateLeaseContractApprovalStatusByFormId(leaseContract.getFormId(),"等待" + approvalOpinion.getApprovalProcessNodeName());
+        /**
+         * 生成消息
+         * */
         Message message = new Message();
         message.setFormId(leaseContract.getFormId());
         message.setMessage(leaseContract.getFormName() + "-" + approvalOpinion.getApprovalProcessNodeName());
@@ -125,7 +134,9 @@ public class LeaseContractServiceImpl implements LeaseContractService {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         message.setCreateDate(format.format(new Date()));
         message.setContractType("租赁合同");
-
+        /**
+         * 更新消息
+         * */
         HashMap<String,Object> map1 = messageService.updateMessage(message);
         if ((int) map1.get("responseCode") == 400){
             object.put("responseCode",map1.get("responseCode"));
@@ -205,6 +216,19 @@ public class LeaseContractServiceImpl implements LeaseContractService {
             return object;
         }
         object.put("tableData",leaseContractDao.searchLeaseContractByKey(key, status));
+        return object;
+    }
+
+    @Override
+    public JSONObject getEnterApplicationComponentLeaseContractData(Long enterpriseId) {
+        JSONObject object = new JSONObject();
+        if (enterpriseDao.isEnterpriseExist(enterpriseId) == 0){
+            object.put("responseCode",400);
+            object.put("msg","该客户不存在");
+            return object;
+        }
+        object.put("responseCode",200);
+        object.put("leaseContractList",leaseContractDao.getLeaseContractIdAndNameByEnterpriseId(enterpriseId));
         return object;
     }
 

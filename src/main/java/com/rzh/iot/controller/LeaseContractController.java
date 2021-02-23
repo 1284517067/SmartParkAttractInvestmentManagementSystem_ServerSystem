@@ -67,4 +67,11 @@ public class LeaseContractController {
     public String searchLeaseContractByKey(@RequestParam String searchKey, @RequestParam String status){
         return leaseContractService.searchLeaseContractByKey(searchKey, status).toJSONString();
     }
+
+    @RequestMapping(value = "/getEnterApplicationComponentLeaseContractData")
+    @JwtToken
+    @ResponseBody
+    public String getEnterApplicationComponentLeaseContractData(@RequestParam String enterpriseId){
+        return leaseContractService.getEnterApplicationComponentLeaseContractData(Long.parseLong(enterpriseId)).toJSONString();
+    }
 }

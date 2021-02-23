@@ -21,6 +21,7 @@ public interface LeaseContractService {
     JSONObject deleteLeaseContract(Long formId);
 
     JSONObject searchLeaseContractByKey(String key, String status);
-    
+
+    JSONObject getEnterApplicationComponentLeaseContractData(Long enterpriseId);
 
 }

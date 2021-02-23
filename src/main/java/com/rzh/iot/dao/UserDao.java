@@ -70,4 +70,8 @@ public interface UserDao {
 
     @Select("select username from user where position_id = #{positionId} and status = '启用'")
     List<String> getUsernameByPositionId(Long positionId);
+
+    @Select("select username from user where status = '启用'")
+    List<User> getUsernameList();
+
 };

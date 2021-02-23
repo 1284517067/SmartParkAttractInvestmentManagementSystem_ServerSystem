@@ -108,4 +108,11 @@ public class UserManagementController {
     public String getUserListByPosition(@RequestParam String departmentId){
         return userService.getUserListByPosition(Long.parseLong(departmentId)).toJSONString() ;
     }
+
+    @RequestMapping(value = "/getUsernameList")
+    @JwtToken
+    @ResponseBody
+    public String getUsernameList(){
+        return userService.getUsernameList().toJSONString();
+    }
 }

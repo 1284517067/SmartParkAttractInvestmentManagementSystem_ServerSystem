@@ -1,5 +1,6 @@
 package com.rzh.iot.utils;
 
+import com.rzh.iot.dao.EnterApplicationDao;
 import com.rzh.iot.dao.IntentionAgreementDao;
 import com.rzh.iot.dao.IntentionRegistrationFormDao;
 import com.rzh.iot.dao.LeaseContractDao;
@@ -22,6 +23,9 @@ public class Common {
     @Autowired
     LeaseContractDao leaseContractDao;
 
+    @Autowired
+    EnterApplicationDao enterApplicationDao;
+
 
     public String mountFormName(String formName,String contractType){
         String str = "(?<=\\()\\d+(?=\\))";
@@ -35,6 +39,10 @@ public class Common {
                 break;
             case "租赁合同":
                 count = leaseContractDao.isNameExist(formName);
+                break;
+            case "入驻申请":
+                count = enterApplicationDao.isNameExist(formName);
+                break;
         }
         if (count != 0){
             Pattern r = Pattern.compile(str);

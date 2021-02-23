@@ -108,8 +108,11 @@ public class LeaseContractRoomServiceImpl implements LeaseContractRoomService {
             Space parentSpace = spaceService.getSpaceNameAndParentNodeId(space.getParentNodeId());
             Space grandParentSpace = spaceService.getSpaceNameAndParentNodeId(parentSpace.getParentNodeId());
             Space greatGrandParentSpace = spaceService.getSpaceNameAndParentNodeId(grandParentSpace.getParentNodeId());
+            space.setFloorId(parentSpace.getSpaceId());
             space.setFloorName(parentSpace.getSpaceName());
+            space.setBuildingId(grandParentSpace.getSpaceId());
             space.setBuildingName(grandParentSpace.getSpaceName());
+            space.setParkId(greatGrandParentSpace.getSpaceId());
             space.setParkName(greatGrandParentSpace.getSpaceName());
         }
         object.put("responseCode", 200);

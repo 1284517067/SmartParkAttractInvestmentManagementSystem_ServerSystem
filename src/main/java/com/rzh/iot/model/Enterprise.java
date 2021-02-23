@@ -3,6 +3,7 @@ package com.rzh.iot.model;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Component
 public class Enterprise implements Serializable {
@@ -59,6 +60,8 @@ public class Enterprise implements Serializable {
 
     private String qq;
 
+    private List<EnterpriseEnterPark> enterParks;
+
     public Enterprise() {
     }
 
@@ -91,6 +94,7 @@ public class Enterprise implements Serializable {
                 ", enterpriseTel='" + enterpriseTel + '\'' +
                 ", source='" + source + '\'' +
                 ", qq='" + qq + '\'' +
+                ", enterParks=" + enterParks +
                 '}';
     }
 
@@ -244,6 +248,14 @@ public class Enterprise implements Serializable {
 
     public void setEnterpriseIntroduction(String enterpriseIntroduction) {
         this.enterpriseIntroduction = enterpriseIntroduction;
+    }
+
+    public List<EnterpriseEnterPark> getEnterParks() {
+        return enterParks;
+    }
+
+    public void setEnterParks(List<EnterpriseEnterPark> enterParks) {
+        this.enterParks = enterParks;
     }
 
     public Long getEnterPark() {

@@ -10,7 +10,7 @@ public interface UserService {
 
     HashMap<String,Object> loginVerify(User user);
 
-    long getPositionIdByUsername(String username);
+    Long getPositionIdByUsername(String username);
 
     List<User> getUserListBylimit(Integer currentPage, Integer limit);
 
@@ -29,4 +29,8 @@ public interface UserService {
     int getCountOfUserByKey(String key);
 
     JSONObject getUserListByPosition(Long departmentId);
+
+    List<String> getUsersByPositionId(Long positionId);
+
+    JSONObject getUsernameList();
 }

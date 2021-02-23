@@ -1,5 +1,6 @@
 package com.rzh.iot.utils;
 
+import com.alibaba.fastjson.JSONObject;
 import com.rzh.iot.dao.IntentionAgreementDao;
 import com.rzh.iot.dao.IntentionAgreementRoomDao;
 import com.rzh.iot.dao.LeaseContractDao;
@@ -92,4 +93,17 @@ public class ScheduledTask {
         }
 
     }
+
+//    private int messageCount = 0;
+//
+//    @Scheduled(cron = "*/10 * * * * ?")
+//    public void testWebSocket(){
+//        System.out.println("向客户端发送信息");
+//        JSONObject object = new JSONObject();
+//        object.put("type","updateMessageCount");
+//        messageCount++;
+//        object.put("messageCount",messageCount);
+//        WebSocketServer webSocketServer = new WebSocketServer();
+//        webSocketServer.sendMessage("admin", object.toString());
+//    }
 }

@@ -6,6 +6,8 @@ import com.rzh.iot.model.Message;
 import com.rzh.iot.service.DepartmentService;
 import com.rzh.iot.service.MessageService;
 import com.rzh.iot.service.PositionService;
+import com.rzh.iot.service.UserService;
+import com.rzh.iot.utils.WebSocketServer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +23,8 @@ public class MessageServiceImpl implements MessageService {
     MessageDao messageDao;
     @Autowired
     DepartmentService departmentService;
+    @Autowired
+    UserService userService;
 
     @Override
     public HashMap<String, Object> updateMessage(Message message) {
@@ -36,6 +40,7 @@ public class MessageServiceImpl implements MessageService {
             messageDao.updateMessage(message);
         }
         map.put("responseCode",200);
+        updateClientMessageCount(message.getPositionId());
         return map;
     }
 
@@ -100,5 +105,23 @@ public class MessageServiceImpl implements MessageService {
         object.put("responseCode",200);
         object.put("msg","更新成功");
         return object;
+    }
+
+    public void updateClientMessageCount(Long positionId){
+        List<String> usernames = userService.getUsersByPositionId(positionId);
+        if (usernames.size() == 0){
+            return;
+        }
+        WebSocketServer webSocketServer = new WebSocketServer();
+        for (String username : usernames){
+            try {
+                JSONObject object = generateMessageCountData(username,positionId);
+                object.put("type","updateMessageCount");
+                webSocketServer.sendMessage(username,object.toJSONString());
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
     }
 }

@@ -1,12 +1,11 @@
 package com.rzh.iot.dao;
 
 import com.rzh.iot.model.Enterprise;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import com.rzh.iot.model.EnterpriseEnterPark;
+import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 
+import javax.websocket.server.PathParam;
 import java.util.List;
 
 @Repository
@@ -14,13 +13,13 @@ import java.util.List;
 public interface EnterpriseDao {
 
     @Select("select a.enterprise_id, a.enterprise_name , a.industry_type_id , a.enter_park, a.enter_time , a.status , b.industry_type_name , c.space_name" +
-            " from enterprise a inner join industry_type b , space_data c " +
-            " where a.industry_type_id = b.industry_type_id and a.enter_park = c.space_id order by a.enterprise_id desc limit #{currentPage} , #{limit}")
+            " from enterprise a left join industry_type b on a.industry_type_id = b.industry_type_id left join space_data c on a.enter_park = c.space_id" +
+            " where a.status != '退园' order by a.enterprise_id desc limit #{currentPage} , #{limit}")
     List<Enterprise> getEnterpriseList(Integer currentPage,Integer limit);
 
     @Select("select count(*)" +
-            " from enterprise a inner join industry_type b , space_data c " +
-            " where a.industry_type_id = b.industry_type_id and a.enter_park = c.space_id order by a.enterprise_id desc")
+            " from enterprise " +
+            " where status != '退园'")
     int getCountOfEnterpriseList();
 
     @Select("select * from enterprise a inner join industry_type b , space_data c where a.industry_type_id = b.industry_type_id and a.enter_park = c.space_id and a.enterprise_id = #{enterpriseId}")
@@ -95,4 +94,28 @@ public interface EnterpriseDao {
     @Select("select contract_type, source, enterprise_area, industry_type_id, contact, contact_department, contact_position, contact_tel, " +
             "qq, enterprise_email, business_registration_type from enterprise where enterprise_id = #{enterpriseId}")
     Enterprise getIntentionAgreementComponentEnterpriseData(Long enterpriseId);
+
+    @Update("update enterprise set enter_park = #{enterPark}, record_date = #{recordDate} where enterprise_id = #{enterpriseId}")
+    int updateEnterpriseEnterParkAndRecordDate(Long enterpriseId, Long enterPark, String recordDate);
+
+    @Insert("<script>" +
+            "insert into enterprise_enter_park" +
+            " (enterprise_id, space_id, record_date)" +
+            " values" +
+            "<foreach collection='enterpriseEnterParks' item='item' index='index' separator=','> " +
+            " (#{item.enterpriseId}, #{item.spaceId}, #{item.recordDate})" +
+            "</foreach>" +
+            "</script>")
+    int createEnterpriseEnterParks(@PathParam(value = "enterpriseEnterParks")List<EnterpriseEnterPark> enterpriseEnterParks);
+
+    @Delete("delete from enterprise_enter_park where enterprise_id = #{enterpriseId}")
+    int deleteEnterpriseEnterParkByEnterpriseId(Long enterpriseId);
+
+    @Delete("delete from enterprise_enter_park where space_id = #{spaceId}")
+    int deleteEnterpriseEnterParksBySpaceId(Long spaceId);
+
+    @Select("select a.*, b.space_name, c.enterprise_name from enterprise_enter_park a inner join space_data b, enterprise c where a.space_id = b.space_id and a.enterprise_id = c.enterprise_id and a.enterprise_id = #{enterpriseId}")
+    List<EnterpriseEnterPark> getEnterpriseEnterParksByEnterpriseId(Long enterpriseId);
+
+
 }

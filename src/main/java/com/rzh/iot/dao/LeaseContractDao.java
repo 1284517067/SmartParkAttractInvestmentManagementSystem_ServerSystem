@@ -51,7 +51,7 @@ public interface LeaseContractDao {
     @Select("select * from lease_contract where status = '已发' and approval_status = '审批完成' and reset_flag = 0")
     List<LeaseContract> getExecutingLeaseContract();
 
-    @Update("update lease_contract set reset_flag = #{resetFlag} where form_id = #{form_Id}")
+    @Update("update lease_contract set reset_flag = #{resetFlag} where form_id = #{formId}")
     int updateLeaseContractResetFlag(Long formId, Integer resetFlag);
 
     @Select("select distinct a.form_id, a.form_name, a.enterprise_id, b.enterprise_name, a.sign_date, a.start_date," +
@@ -69,4 +69,10 @@ public interface LeaseContractDao {
             "or (b.enterprise_name like '%${value}%') or (a.sign_date like '%${value}%') or (a.start_date like '%${value}%') " +
             "or (a.expiry_date like '%${value}%') or (a.applicant like '%${value}%'))")
     int getSizeOfSearchLeaseContractByKey(String value, String status);
+
+
+    @Select("select form_id, form_name from lease_contract where status = '已发' and approval_status = '审批完成' and enterprise_id = #{enterpriseId}")
+    List<LeaseContract> getLeaseContractIdAndNameByEnterpriseId(Long enterpriseId);
+
 }
+

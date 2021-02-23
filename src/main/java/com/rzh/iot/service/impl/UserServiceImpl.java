@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+
 public class UserServiceImpl implements UserService {
 
     @Autowired
@@ -74,7 +75,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public long getPositionIdByUsername(String username) {
+    public Long getPositionIdByUsername(String username) {
         return userDao.getPositionIdByUsername(username);
     }
 
@@ -175,4 +176,19 @@ public class UserServiceImpl implements UserService {
         object.put("managers",userDao.getUsernameByPositionId(positionId));
         return object;
     }
+
+    @Override
+    public List<String> getUsersByPositionId(Long positionId) {
+
+        return userDao.getUsernameByPositionId(positionId);
+    }
+
+    @Override
+    public JSONObject getUsernameList() {
+        JSONObject object = new JSONObject();
+        object.put("responseCode", 200);
+        object.put("userList",userDao.getUsernameList());
+        return object;
+    }
+
 }

@@ -10,6 +10,7 @@ import com.rzh.iot.service.IntentionRegistrationFormService;
 import com.rzh.iot.service.MenuService;
 import com.rzh.iot.service.impl.ApprovalOpinionServiceImpl;
 import com.rzh.iot.utils.Common;
+import com.rzh.iot.utils.WebSocketServer;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -46,6 +47,8 @@ class IotApplicationTests {
     IntentionRegistrationFormService intentionRegistrationFormService;
     @Resource
     Common common;
+    @Resource
+    WebSocketServer webSocketServer;
 
 
     @Test
@@ -111,6 +114,23 @@ class IotApplicationTests {
     @Test
     void testProject(){
         spaceDao.updateSpaceEnterpriseIdBySpaceId(new Long(4),null);
+    }
+
+    @Test
+    void testWebsocket(){
+        WebSocketServer webSocketServer = new WebSocketServer();
+        webSocketServer.sendMessage("admin","1");
+    }
+
+    public class Thread implements Runnable{
+
+        @Override
+        public void run() {
+            try {
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
     }
 
 

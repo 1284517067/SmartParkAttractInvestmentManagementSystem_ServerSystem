@@ -39,6 +39,9 @@ public class ApprovalOpinionServiceImpl implements ApprovalOpinionService {
     EnterpriseService enterpriseService;
 
     @Autowired
+    EnterpriseDao enterpriseDao;
+
+    @Autowired
     IntentionAgreementService intentionAgreementService;
 
     @Autowired
@@ -55,6 +58,15 @@ public class ApprovalOpinionServiceImpl implements ApprovalOpinionService {
 
     @Autowired
     LeaseContractRoomService leaseContractRoomService;
+
+    @Autowired
+    EnterApplicationDao enterApplicationDao;
+
+    @Autowired
+    EnterApplicationService enterApplicationService;
+
+    @Autowired
+    EnterpriseEnterParkService enterpriseEnterParkService;
 
     @Override
     public HashMap<String, Object> createApprovalOpinions(Long formId, String contractType,String businessType) {
@@ -136,6 +148,16 @@ public class ApprovalOpinionServiceImpl implements ApprovalOpinionService {
                 case "意向登记":
                     intentionRegistrationFormDao.updateApprovalStatus(formId,status);
                     break;
+                case "意向协议":
+                    intentionAgreementDao.updateIntentionAgreementApprovalStatus(formId,status);
+                    break;
+                case "租赁合同":
+                    leaseContractDao.updateLeaseContractApprovalStatusByFormId(formId,status);
+                    break;
+                case "入驻申请":
+                    enterApplicationDao.updateEnterApplicationApprovalStatusByFormId(formId,status);
+                    break;
+
             }
             object.put("responseCode",200);
             object.put("msg","审批成功");
@@ -168,6 +190,11 @@ public class ApprovalOpinionServiceImpl implements ApprovalOpinionService {
                 formName = leaseContract.getFormName();
                 principal1 = leaseContract.getApplicant();
                 break;
+            case "入驻申请":
+                EnterApplication enterApplication = enterApplicationService.getEnterApplicationDetailData(formId).getObject("enterApplication",EnterApplication.class);
+                formName = enterApplication.getFormName();
+                principal1 = enterApplication.getPrincipal();
+                break;
         }
 
 
@@ -188,6 +215,9 @@ public class ApprovalOpinionServiceImpl implements ApprovalOpinionService {
                     break;
                 case "租赁合同":
                     leaseContractDao.updateLeaseContractApprovalStatusByFormId(formId,"等待"+ approvalOpinion.getApprovalProcessNodeName());
+                    break;
+                case "入驻申请":
+                    enterApplicationDao.updateEnterApplicationApprovalStatusByFormId(formId,"等待" + approvalOpinion.getApprovalProcessNodeName());
                     break;
             }
             /**
@@ -251,6 +281,16 @@ public class ApprovalOpinionServiceImpl implements ApprovalOpinionService {
                         object.put("msg",e.getMessage());
                         return object;
                     }
+                    break;
+                case "入驻申请":
+                    enterApplicationDao.updateEnterApplicationApprovalStatusByFormId(formId,"审批完成");
+                    EnterApplication enterApplication = enterApplicationService.getEnterApplicationDetailData(formId).getObject("enterApplication",EnterApplication.class);
+                    List<EnterpriseEnterPark> enterpriseEnterParks = enterpriseEnterParkService.mountEnterpriseEnterParks(
+                            enterApplication.getEnterpriseId(),
+                            leaseContractRoomService.getLeaseContractSpaceData(enterApplication.getContractId()).getJSONArray("spaces").toJavaList(Space.class),
+                            enterApplication.getEnterTime());
+                    enterpriseEnterParks = enterpriseEnterParkService.filterEnterpriseEnterParks(enterApplication.getEnterpriseId(),enterpriseEnterParks);
+                    enterpriseDao.createEnterpriseEnterParks(enterpriseEnterParks);
                     break;
 
             }

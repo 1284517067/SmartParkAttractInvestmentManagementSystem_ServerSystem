@@ -12,6 +12,7 @@ public class User implements Serializable {
     private Long positionId;
     private String positionName;
     private String departmentName;
+    private String status;
 
     public String getDepartmentName() {
         return departmentName;
@@ -29,7 +30,7 @@ public class User implements Serializable {
         this.positionName = positionName;
     }
 
-    private String status;
+
 
     public String getUsername() {
         return username;
@@ -47,7 +48,7 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    public int getAccountLevel() {
+    public Integer getAccountLevel() {
         return accountLevel;
     }
 
@@ -55,7 +56,7 @@ public class User implements Serializable {
         this.accountLevel = accountLevel;
     }
 
-    public long getPositionId() {
+    public Long getPositionId() {
         return positionId;
     }
 

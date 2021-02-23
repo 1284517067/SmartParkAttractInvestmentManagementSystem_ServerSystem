@@ -3,6 +3,8 @@ package com.rzh.iot.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.rzh.iot.dao.EnterpriseDao;
 import com.rzh.iot.model.Enterprise;
+import com.rzh.iot.model.EnterpriseEnterPark;
+import com.rzh.iot.service.EnterpriseEnterParkService;
 import com.rzh.iot.service.EnterpriseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,9 +18,28 @@ public class EnterpriseServiceImpl implements EnterpriseService {
     @Autowired
     EnterpriseDao enterpriseDao;
 
+    @Autowired
+    EnterpriseEnterParkService enterpriseEnterParkService;
+
+
     @Override
     public List<Enterprise> getEnterpriseTableDataByLimit(Integer currentPage,Integer limit) {
-        return enterpriseDao.getEnterpriseList((currentPage - 1)* limit, limit);
+        List<Enterprise> enterprises = enterpriseDao.getEnterpriseList((currentPage - 1)* limit, limit);
+        for (Enterprise enterprise : enterprises){
+            enterprise.setEnterParks(enterpriseDao.getEnterpriseEnterParksByEnterpriseId(enterprise.getEnterpriseId()));
+            String spaceName = "",recordDate = "";
+            for (int i = 0 ; i < enterprise.getEnterParks().size(); i++){
+                if (i != 0){
+                    spaceName += ",";
+                    recordDate += ",";
+                }
+                spaceName += enterprise.getEnterParks().get(i).getSpaceName();
+                recordDate += enterprise.getEnterParks().get(i).getRecordDate();
+            }
+            enterprise.setSpaceName(spaceName);
+            enterprise.setEnterTime(recordDate);
+        }
+        return enterprises;
     }
 
     @Override

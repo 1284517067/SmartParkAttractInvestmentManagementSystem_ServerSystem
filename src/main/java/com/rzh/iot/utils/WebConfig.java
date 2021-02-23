@@ -17,13 +17,13 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(jwtInterceptor())
-                .addPathPatterns("/**");
+                .addPathPatterns("/**","/webSocket/**");
     }
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:8080")
+                .allowedOrigins("http://localhost:8080","http://localhost:8083")
                 .allowCredentials(true)
                 .allowedMethods("GET","POST","PUT","PATCH","OPTIONS","HEAD")
                 .maxAge(3600*24);

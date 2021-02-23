@@ -81,6 +81,8 @@ public class SpaceController {
     }
 
     @RequestMapping(value = "/lazyLoadIntentionAgreementSpaceLeaf")
+    @JwtToken
+    @ResponseBody
     public String lazyLoadIntentionAgreementSpaceLeaf(@RequestParam String spaceId, @RequestParam String enterpriseId){
         return spaceService.lazyLoadIntentionAgreementSpaceLeaf(Long.parseLong(spaceId), Long.parseLong(enterpriseId)).toJSONString();
     }
